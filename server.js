@@ -1,6 +1,6 @@
-// server.js
 const express = require('express');
 const cors = require('cors');
+const cron = require('node-cron');
 const fs = require('fs');
 const path = require('path');
 
@@ -10,6 +10,13 @@ const DATA_PATH = path.join(__dirname, 'technicianQueue.json');
 
 app.use(cors());
 app.use(express.json());
+
+// Reset queue at 4 AM daily
+cron.schedule('0 4 * * *', () => {
+  const emptyQueue = [];
+  fs.writeFileSync(DATA_PATH, JSON.stringify(emptyQueue, null, 2));
+  console.log('Technician queue reset at 4 AM');
+});
 
 function readQueue() {
   try {
@@ -84,7 +91,6 @@ app.get('/getQueue', (req, res) => {
   res.json(queue);
 });
 
-// ✅ Move this outside of the route definition
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
 });
