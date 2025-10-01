@@ -14,4 +14,8 @@ function writeQueue(queue) {
   fs.writeFileSync(DATA_PATH, JSON.stringify(queue, null, 2));
 }
 
-module.exports = { readQueue, writeQueue };
+function removeTechnician(queue, technicianName) {
+  return queue.filter(t => t.name !== technicianName);
+}
+
+module.exports = { readQueue, writeQueue, removeTechnician };
