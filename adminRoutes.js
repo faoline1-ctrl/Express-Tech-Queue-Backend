@@ -17,6 +17,21 @@ router.get('/viewQueue', (req, res) => {
   res.json(queue);
 });
 
+router.post('/removeTechnician', (req, res) => {
+  const { technician } = req.body;
+  let queue = readQueue();
+
+  const techExists = queue.some(t => t.name === technician);
+  if (!techExists) {
+    return res.status(404).json({ error: 'Technician not found' });
+  }
+
+  const updatedQueue = removeTechnician(queue, technician);
+  writeQueue(updatedQueue);
+
+  res.json({ message: `Technician "${technician}" removed successfully.` });
+});
+
 // Add more admin routes here...
 
 module.exports = router;
