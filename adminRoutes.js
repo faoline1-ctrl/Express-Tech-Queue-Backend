@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { readQueue, writeQueue } = require('./queueUtils'); // adjust path as needed
+const { readQueue, writeQueue, removeTechnician } = require('./queueUtils'); // adjust path as needed
 
 // Middleware for token-based auth
 router.use((req, res, next) => {
