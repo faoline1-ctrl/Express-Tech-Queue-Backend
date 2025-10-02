@@ -72,17 +72,19 @@ app.post('/setStatus', (req, res) => {
 app.get('/getQueue', (req, res) => {
   let queue = readQueue();
 
+const weightFactor = 10; // Each completed work order reduces priority by 10 minutes
+
   queue.sort((a, b) => {
-    if (a.status !== b.status) return a.status === 'Available' ? -1 : 1;
-    if (a.completed_work_orders !== b.completed_work_orders) {
-      return a.completed_work_orders - b.completed_work_orders;
-    }
+    const now = Date.now();
 
-    const aTime = new Date(a.status_timestamp || a.timestamp_joined);
-    const bTime = new Date(b.status_timestamp || b.timestamp_joined);
-    return aTime - bTime;
+    const aWait = (now - new Date(a.status_timestamp || a.timestamp_joined)) / 60000;
+    const bWait = (now - new Date(b.status_timestamp || b.timestamp_joined)) / 60000;
+
+    const aScore = a.status === 'Available' ? aWait - (a.completed_work_orders * weightFactor) : -Infinity;
+    const bScore = b.status === 'Available' ? bWait - (b.completed_work_orders * weightFactor) : -Infinity;
+
+    return bScore - aScore; // Higher score = higher priority
   });
-
   res.json(queue);
 });
 
