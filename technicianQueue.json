@@ -1,0 +1,37 @@
+[
+  {
+    "name": "Alice",
+    "completed_work_orders": 3,
+    "status": "Available",
+    "status_timestamp": "2025-10-01T04:02:44.264602",
+    "timestamp_joined": "2025-10-01T04:02:44.264609"
+  },
+  {
+    "name": "Bob",
+    "completed_work_orders": 5,
+    "status": "Available",
+    "status_timestamp": "2025-10-01T04:50:41.452Z",
+    "timestamp_joined": "2025-10-01T04:02:44.264612"
+  },
+  {
+    "name": "Charlie",
+    "completed_work_orders": 2,
+    "status": "Available",
+    "status_timestamp": "2025-10-01T04:02:44.264614",
+    "timestamp_joined": "2025-10-01T04:02:44.264615"
+  },
+  {
+    "name": "Justin",
+    "completed_work_orders": 3,
+    "status": "Work in Progress",
+    "status_timestamp": "2025-10-01T05:26:39.635Z",
+    "timestamp_joined": "2025-10-01T04:11:51.079Z"
+  },
+  {
+    "name": "Jack",
+    "completed_work_orders": 2,
+    "status": "Away",
+    "status_timestamp": "2025-10-01T05:31:34.700Z",
+    "timestamp_joined": "2025-10-01T04:12:45.641Z"
+  }
+]
