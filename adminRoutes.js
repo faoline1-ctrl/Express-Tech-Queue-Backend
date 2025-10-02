@@ -3,7 +3,7 @@ const express = require('express');
 // Export a factory that accepts a broadcastQueue function so admin routes can notify SSE clients
 module.exports = function (broadcastQueue) {
   const router = express.Router();
-  const { readQueue, writeQueue, removeTechnician } = require('./queueUtils'); // adjust path as needed
+  const { readQueue, writeQueue, removeTechnician } = require('./queueUtils');
 
   // Middleware for token-based auth
   router.use((req, res, next) => {
@@ -22,47 +22,40 @@ module.exports = function (broadcastQueue) {
 
   router.post('/removeTechnician', (req, res) => {
     try {
-      const { technician } = req.body;
-      console.log('[DEBUG] Technician to remove:', technician);
+      const { technician } = req.body || {};
 
       if (!technician || typeof technician !== 'string') {
-        console.log('[DEBUG] Invalid technician name');
         return res.status(400).json({ error: 'Invalid or missing technician name' });
       }
 
       const queue = readQueue();
-      console.log('[DEBUG] Original queue:', queue);
-
       const techExists = queue.some(t => t.name === technician);
-      console.log('[DEBUG] Technician exists:', techExists);
 
       if (!techExists) {
         return res.status(404).json({ error: 'Technician not found' });
       }
 
       const updatedQueue = removeTechnician(queue, technician);
-      console.log('[DEBUG] Updated queue:', updatedQueue);
 
       if (!Array.isArray(updatedQueue)) {
-        console.log('[DEBUG] Updated queue is not an array');
         return res.status(500).json({ error: 'Invalid queue format' });
       }
 
-      writeQueue(updatedQueue);
-      console.log('[DEBUG] Queue written successfully');
+      try {
+        writeQueue(updatedQueue);
+      } catch (err) {
+        console.error('Failed to write queue from admin removeTechnician:', err);
+        return res.status(500).json({ error: 'Failed to persist queue' });
+      }
 
       // notify SSE clients if broadcastQueue is provided
-      try {
-        if (typeof broadcastQueue === 'function') {
-          broadcastQueue(updatedQueue);
-        }
-      } catch (err) {
-        console.error('[ERROR] broadcasting updated queue from adminRoutes:', err);
+      if (typeof broadcastQueue === 'function') {
+        try { broadcastQueue(updatedQueue); } catch (err) { /* ignore broadcast errors */ }
       }
 
       res.json({ message: `Technician "${technician}" removed successfully.` });
     } catch (error) {
-      console.error('[ERROR] removeTechnician failed:', error);
+      console.error('removeTechnician failed:', error);
       res.status(500).json({ error: 'Internal Server Error' });
     }
   });
