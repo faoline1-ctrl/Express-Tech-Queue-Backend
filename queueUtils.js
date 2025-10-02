@@ -4,8 +4,11 @@ const DATA_PATH = path.join(__dirname, 'technicianQueue.json');
 
 function readQueue() {
   try {
-    return JSON.parse(fs.readFileSync(DATA_PATH, 'utf8'));
+    const raw = fs.readFileSync(DATA_PATH, 'utf8');
+    console.log('[DEBUG] Raw file content:', raw);
+    return JSON.parse(raw);
   } catch (err) {
+    console.error('[ERROR] Failed to read queue:', err);
     return [];
   }
 }
