@@ -18,18 +18,41 @@ router.get('/viewQueue', (req, res) => {
 });
 
 router.post('/removeTechnician', (req, res) => {
-  const { technician } = req.body;
-  let queue = readQueue();
+  try {
+    const { technician } = req.body;
+    console.log('[DEBUG] Technician to remove:', technician);
 
-  const techExists = queue.some(t => t.name === technician);
-  if (!techExists) {
-    return res.status(404).json({ error: 'Technician not found' });
+    if (!technician || typeof technician !== 'string') {
+      console.log('[DEBUG] Invalid technician name');
+      return res.status(400).json({ error: 'Invalid or missing technician name' });
+    }
+
+    const queue = readQueue();
+    console.log('[DEBUG] Original queue:', queue);
+
+    const techExists = queue.some(t => t.name === technician);
+    console.log('[DEBUG] Technician exists:', techExists);
+
+    if (!techExists) {
+      return res.status(404).json({ error: 'Technician not found' });
+    }
+
+    const updatedQueue = removeTechnician(queue, technician);
+    console.log('[DEBUG] Updated queue:', updatedQueue);
+
+    if (!Array.isArray(updatedQueue)) {
+      console.log('[DEBUG] Updated queue is not an array');
+      return res.status(500).json({ error: 'Invalid queue format' });
+    }
+
+    writeQueue(updatedQueue);
+    console.log('[DEBUG] Queue written successfully');
+
+    res.json({ message: `Technician "${technician}" removed successfully.` });
+  } catch (error) {
+    console.error('[ERROR] removeTechnician failed:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
-
-  const updatedQueue = removeTechnician(queue, technician);
-  writeQueue(updatedQueue);
-
-  res.json({ message: `Technician "${technician}" removed successfully.` });
 });
 
 // Add more admin routes here...
