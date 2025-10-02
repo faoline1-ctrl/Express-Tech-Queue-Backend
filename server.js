@@ -11,12 +11,11 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 const DATA_PATH = path.join(__dirname, 'technicianQueue.json');
-const adminRoutes = require('./adminRoutes'); // adjust path if needed
+// adminRoutes will be required after broadcastQueue is defined so we can pass the broadcast function
 const { readQueue, writeQueue, removeTechnician } = require('./queueUtils');
 
 app.use(cors());
 app.use(express.json());
-app.use('/admin', adminRoutes);
 
 // Reset queue at 4 AM daily
 cron.schedule('0 4 * * *', () => {
@@ -50,6 +49,8 @@ app.post('/startWorkOrder', (req, res) => {
   }
 
   writeQueue(queue);
+  // notify SSE clients about the updated queue
+  broadcastQueue(queue);
   res.json({ message: `Work order started for ${technician}` });
 });
 
@@ -66,6 +67,8 @@ app.post('/setStatus', (req, res) => {
   }
 
   writeQueue(queue);
+  // notify SSE clients about the updated queue
+  broadcastQueue(queue);
   res.json({ message: `Status updated to "${status}" for ${technician}` });
 });
 
@@ -92,6 +95,40 @@ app.get('/admin/viewQueue', (req, res) => {
   const queue = readQueue();
   res.json(queue);
 });
+
+const sseClients = new Set();
+
+app.get('/events', (req, res) => {
+  res.writeHead(200, {
+    'Content-Type': 'text/event-stream',
+    'Cache-Control': 'no-cache',
+    'Connection': 'keep-alive'
+  });
+  res.write('\n');
+
+  sseClients.add(res);
+
+  req.on('close', () => {
+    sseClients.delete(res);
+  });
+});
+
+// helper to broadcast
+function broadcastQueue(queue) {
+  const payload = `data: ${JSON.stringify(queue)}\n\n`;
+  for (const res of sseClients) {
+    res.write(payload);
+  }
+}
+
+// Mount admin routes and pass broadcastQueue so admin actions broadcast updates
+try {
+  const adminRoutesFactory = require('./adminRoutes');
+  const adminRoutes = adminRoutesFactory(broadcastQueue);
+  app.use('/admin', adminRoutes);
+} catch (err) {
+  console.error('Failed to mount adminRoutes with broadcast support:', err);
+}
 
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
