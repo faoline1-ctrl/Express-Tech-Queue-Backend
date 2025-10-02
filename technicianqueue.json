@@ -33,19 +33,5 @@
     "status": "Away",
     "status_timestamp": "2025-10-01T05:31:34.700Z",
     "timestamp_joined": "2025-10-01T04:12:45.641Z"
-  },
-  {
-    "name": "Xavier",
-    "completed_work_orders": 1,
-    "status": "Away",
-    "status_timestamp": "2025-10-01T04:50:04.224Z",
-    "timestamp_joined": "2025-10-01T04:26:53.446Z"
-  },
-  {
-    "name": "JayDubb",
-    "completed_work_orders": 1,
-    "status": "Available",
-    "status_timestamp": "2025-10-01T05:29:20.758Z",
-    "timestamp_joined": "2025-10-01T05:29:20.758Z"
   }
 ]
