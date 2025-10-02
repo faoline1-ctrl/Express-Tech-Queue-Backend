@@ -11,7 +11,7 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 const DATA_PATH = path.join(__dirname, 'technicianQueue.json');
-const adminRoutes = require('./adminRoutes'); // adjust path if needed
+const adminRoutes = require('./adminroutes'); // adjust path if needed
 const { readQueue, writeQueue } = require('./queueUtils');
 
 app.use(cors());
