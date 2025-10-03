@@ -25,4 +25,22 @@ function removeTechnician(queue, technicianName) {
   return queue.filter(t => t.name !== technicianName);
 }
 
-module.exports = { readQueue, writeQueue, removeTechnician };
+function sortQueue(queue, weightFactor = 10) {
+  if (!Array.isArray(queue)) return [];
+  const now = Date.now();
+  const copy = queue.slice();
+  copy.sort((a, b) => {
+    const aDate = new Date(a.status_timestamp || a.timestamp_joined);
+    const bDate = new Date(b.status_timestamp || b.timestamp_joined);
+    const aWait = Number.isFinite(aDate.getTime()) ? (now - aDate) / 60000 : 0;
+    const bWait = Number.isFinite(bDate.getTime()) ? (now - bDate) / 60000 : 0;
+    const aCompleted = Number(a.completed_work_orders || 0);
+    const bCompleted = Number(b.completed_work_orders || 0);
+    const aScore = a.status === 'Available' ? aWait - aCompleted * weightFactor : -Infinity;
+    const bScore = b.status === 'Available' ? bWait - bCompleted * weightFactor : -Infinity;
+    return bScore - aScore;
+  });
+  return copy;
+}
+
+module.exports = { readQueue, writeQueue, removeTechnician, sortQueue };

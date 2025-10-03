@@ -3,7 +3,7 @@ const express = require('express');
 // Export a factory that accepts a broadcastQueue function so admin routes can notify SSE clients
 module.exports = function (broadcastQueue) {
   const router = express.Router();
-  const { readQueue, writeQueue, removeTechnician } = require('./queueUtils');
+  const { readQueue, writeQueue, removeTechnician, sortQueue } = require('./queueUtils');
 
   // Middleware for token-based auth
   router.use((req, res, next) => {
@@ -16,8 +16,9 @@ module.exports = function (broadcastQueue) {
 
   // View technician queue
   router.get('/viewQueue', (req, res) => {
-    const queue = readQueue();
-    res.json(queue);
+    const raw = Array.isArray(readQueue()) ? readQueue() : [];
+    const sorted = sortQueue(raw);
+    res.json(sorted);
   });
 
   router.post('/removeTechnician', (req, res) => {
@@ -48,9 +49,9 @@ module.exports = function (broadcastQueue) {
         return res.status(500).json({ error: 'Failed to persist queue' });
       }
 
-      // notify SSE clients if broadcastQueue is provided
+      // notify SSE clients if broadcastQueue is provided (send sorted queue)
       if (typeof broadcastQueue === 'function') {
-        try { broadcastQueue(updatedQueue); } catch (err) { /* ignore broadcast errors */ }
+        try { broadcastQueue(sortQueue(updatedQueue)); } catch (err) { /* ignore broadcast errors */ }
       }
 
       res.json({ message: `Technician "${technician}" removed successfully.` });

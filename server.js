@@ -6,7 +6,7 @@ require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const { readQueue, writeQueue } = require('./queueUtils');
+const { readQueue, writeQueue, sortQueue } = require('./queueUtils');
 
 app.use(cors());
 app.use(express.json());
@@ -50,35 +50,25 @@ app.post('/setStatus', (req, res) => {
   return res.json({ message: 'Status updated' });
 });
 
+// Get Queue data and sort by availability and wait time
 app.get('/getQueue', (req, res) => {
-  const queue = Array.isArray(readQueue()) ? readQueue() : [];
-  const weightFactor = 10;
-  queue.sort((a, b) => {
-    const now = Date.now();
-    const aDate = new Date(a.status_timestamp || a.timestamp_joined);
-    const bDate = new Date(b.status_timestamp || b.timestamp_joined);
-    const aWait = Number.isFinite(aDate.getTime()) ? (now - aDate) / 60000 : 0;
-    const bWait = Number.isFinite(bDate.getTime()) ? (now - bDate) / 60000 : 0;
-    const aCompleted = Number(a.completed_work_orders || 0);
-    const bCompleted = Number(b.completed_work_orders || 0);
-    const aScore = a.status === 'Available' ? aWait - aCompleted * weightFactor : -Infinity;
-    const bScore = b.status === 'Available' ? bWait - bCompleted * weightFactor : -Infinity;
-    return bScore - aScore;
-  });
-  res.json(queue);
+  const raw = Array.isArray(readQueue()) ? readQueue() : [];
+  const sorted = sortQueue(raw);
+  res.json(sorted);
 });
 
 const sseClients = new Set();
 app.get('/events', (req, res) => {
   res.set({ 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache', Connection: 'keep-alive' });
   res.write(': connected\n\n');
-  try { const initial = readQueue(); res.write(`data: ${JSON.stringify(initial)}\n\n`); } catch (e) {}
+  try { const initial = Array.isArray(readQueue()) ? readQueue() : []; const sortedInitial = sortQueue(initial); res.write(`data: ${JSON.stringify(sortedInitial)}\n\n`); } catch (e) {}
   sseClients.add(res);
   req.on('close', () => { sseClients.delete(res); try { res.end(); } catch (e) {} });
 });
 
 function broadcastQueue(queue) {
-  const payload = `data: ${JSON.stringify(queue)}\n\n`;
+  const sorted = sortQueue(queue);
+  const payload = `data: ${JSON.stringify(sorted)}\n\n`;
   for (const r of Array.from(sseClients)) { try { r.write(payload); } catch (e) { sseClients.delete(r); try { r.end(); } catch (e) {} } }
 }
 
