@@ -1,37 +1,79 @@
 [
   {
-    "name": "Alice",
-    "completed_work_orders": 3,
-    "status": "Available",
-    "status_timestamp": "2025-10-01T04:02:44.264602",
-    "timestamp_joined": "2025-10-01T04:02:44.264609"
-  },
-  {
     "name": "Bob",
-    "completed_work_orders": 5,
-    "status": "Available",
-    "status_timestamp": "2025-10-01T04:50:41.452Z",
-    "timestamp_joined": "2025-10-01T04:02:44.264612"
+    "completed_work_orders": 0,
+    "status": "Away",
+    "status_timestamp": "2025-10-02T19:18:54.640Z",
+    "timestamp_joined": "2025-10-02T17:16:58.800Z"
   },
   {
-    "name": "Charlie",
-    "completed_work_orders": 2,
-    "status": "Available",
-    "status_timestamp": "2025-10-01T04:02:44.264614",
-    "timestamp_joined": "2025-10-01T04:02:44.264615"
+    "name": "Axel",
+    "completed_work_orders": 0,
+    "status": "Away",
+    "status_timestamp": "2025-10-02T18:19:44.971Z",
+    "timestamp_joined": "2025-10-02T17:17:11.457Z"
   },
   {
-    "name": "Justin",
-    "completed_work_orders": 3,
-    "status": "Work in Progress",
-    "status_timestamp": "2025-10-01T05:26:39.635Z",
-    "timestamp_joined": "2025-10-01T04:11:51.079Z"
+    "name": "MADS",
+    "completed_work_orders": 0,
+    "status": "Away",
+    "status_timestamp": "2025-10-02T18:04:05.099Z",
+    "timestamp_joined": "2025-10-02T17:17:22.221Z"
+  },
+  {
+    "name": "Danny",
+    "completed_work_orders": 0,
+    "status": "Away",
+    "status_timestamp": "2025-10-02T21:12:13.589Z",
+    "timestamp_joined": "2025-10-02T17:18:03.724Z"
+  },
+  {
+    "name": "Hadish",
+    "completed_work_orders": 0,
+    "status": "Away",
+    "status_timestamp": "2025-10-02T17:18:21.278Z",
+    "timestamp_joined": "2025-10-02T17:18:15.253Z"
+  },
+  {
+    "name": "Alberth",
+    "completed_work_orders": 0,
+    "status": "Away",
+    "status_timestamp": "2025-10-02T18:03:37.673Z",
+    "timestamp_joined": "2025-10-02T17:18:28.580Z"
+  },
+  {
+    "name": "DJ",
+    "completed_work_orders": 0,
+    "status": "Away",
+    "status_timestamp": "2025-10-02T21:04:56.315Z",
+    "timestamp_joined": "2025-10-02T17:18:38.089Z"
+  },
+  {
+    "name": "X",
+    "completed_work_orders": 0,
+    "status": "Away",
+    "status_timestamp": "2025-10-02T19:18:37.581Z",
+    "timestamp_joined": "2025-10-02T17:18:47.293Z"
+  },
+  {
+    "name": "JayDubb",
+    "completed_work_orders": 0,
+    "status": "Away",
+    "status_timestamp": "2025-10-02T19:18:43.706Z",
+    "timestamp_joined": "2025-10-02T17:18:59.573Z"
   },
   {
     "name": "Jack",
-    "completed_work_orders": 2,
+    "completed_work_orders": 0,
     "status": "Away",
-    "status_timestamp": "2025-10-01T05:31:34.700Z",
-    "timestamp_joined": "2025-10-01T04:12:45.641Z"
+    "status_timestamp": "2025-10-02T19:18:43.706Z",
+    "timestamp_joined": "2025-10-02T17:18:59.573Z"
+  },
+  {
+    "name": "Justin",
+    "completed_work_orders": 0,
+    "status": "Away",
+    "status_timestamp": "2025-10-02T19:13:40.444Z",
+    "timestamp_joined": "2025-10-02T17:19:10.062Z"
   }
 ]
