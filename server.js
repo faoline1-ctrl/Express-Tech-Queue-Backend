@@ -31,11 +31,18 @@ app.post('/startWorkOrder', (req, res) => {
   if (!technician || typeof technician !== 'string') return res.status(400).json({ error: 'Invalid technician' });
   const queue = Array.isArray(readQueue()) ? readQueue() : [];
   let tech = queue.find(t => t.name === technician);
-  if (!tech) { tech = addTechnician(technician); queue.push(tech); }
-  else { tech.completed_work_orders = (tech.completed_work_orders || 0) + 1; tech.status = 'Work in Progress'; tech.status_timestamp = new Date().toISOString(); }
+  const wasAdded = !tech;
+  if (!tech) {
+    tech = addTechnician(technician);
+    queue.push(tech);
+  } else {
+    tech.completed_work_orders = (tech.completed_work_orders || 0) + 1;
+    tech.status = 'Work in Progress';
+    tech.status_timestamp = new Date().toISOString();
+  }
   try { writeQueue(queue); } catch (err) { console.error(err); return res.status(500).json({ error: 'Persist failed' }); }
   broadcastQueue(queue);
-  return res.json({ message: `Work order started for ${technician}` });
+  return res.json({ message: wasAdded ? `Technician ${technician} added to the Queue` : `Work order started for ${technician}` });
 });
 
 app.post('/setStatus', (req, res) => {
